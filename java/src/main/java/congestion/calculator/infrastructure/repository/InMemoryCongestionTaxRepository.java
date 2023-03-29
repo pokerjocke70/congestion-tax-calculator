@@ -22,6 +22,55 @@ public class InMemoryCongestionTaxRepository implements CongestionTaxRepository 
             "Diplomat",
             "Foreign",
             "Military");
+    private final List<String> freeDates = List.of(
+            "2013-01-01",
+            "2013-03-28",
+            "2013-03-29",
+            "2013-04-01",
+            "2013-04-30",
+            "2013-05-01",
+            "2013-05-08",
+            "2013-05-09",
+            "2013-06-05",
+            "2013-06-06",
+            "2013-06-21",
+            "2013-07-01",
+            "2013-07-02",
+            "2013-07-03",
+            "2013-07-04",
+            "2013-07-05",
+            "2013-07-06",
+            "2013-07-07",
+            "2013-07-08",
+            "2013-07-09",
+            "2013-07-10",
+            "2013-07-11",
+            "2013-07-12",
+            "2013-07-13",
+            "2013-07-14",
+            "2013-07-15",
+            "2013-07-16",
+            "2013-07-17",
+            "2013-07-18",
+            "2013-07-19",
+            "2013-07-20",
+            "2013-07-21",
+            "2013-07-22",
+            "2013-07-23",
+            "2013-07-24",
+            "2013-07-25",
+            "2013-07-26",
+            "2013-07-27",
+            "2013-07-28",
+            "2013-07-29",
+            "2013-07-30",
+            "2013-07-31",
+            "2013-11-01",
+            "2013-12-24",
+            "2013-12-25",
+            "2013-12-26",
+            "2013-12-31"
+    );
 
     @Override
     public boolean isFreeVehicle(String vehicleType) {
@@ -36,19 +85,7 @@ public class InMemoryCongestionTaxRepository implements CongestionTaxRepository 
             return true;
         }
 
-        if (date.getYear() == 2013) {
-            var month = date.getMonthValue();
-            var dayOfMonth = date.getDayOfMonth();
-            return month == 1 && dayOfMonth == 1 ||
-                    month == 3 && (dayOfMonth == 28 || dayOfMonth == 29) ||
-                    month == 4 && (dayOfMonth == 1 || dayOfMonth == 30) ||
-                    month == 5 && (dayOfMonth == 1 || dayOfMonth == 8 || dayOfMonth == 9) ||
-                    month == 6 && (dayOfMonth == 5 || dayOfMonth == 6 || dayOfMonth == 21) ||
-                    month == 7 ||
-                    month == 11 && dayOfMonth == 1 ||
-                    month == 12 && (dayOfMonth == 24 || dayOfMonth == 25 || dayOfMonth == 26 || dayOfMonth == 31);
-        }
-        return false;
+        return freeDates.contains(date.toString());
     }
 
     @Override

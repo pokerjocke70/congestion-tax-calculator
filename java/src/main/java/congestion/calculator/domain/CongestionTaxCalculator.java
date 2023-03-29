@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Named
 public class CongestionTaxCalculator {
@@ -25,9 +26,13 @@ public class CongestionTaxCalculator {
                 .map(date -> new DateAndFee(date, getTollFee(date, billablePeriods)))
                 .toList();
 
-        return Math.min(maxFee, getDateAndFees(dateAndFees, bucketDuration).stream()
-                .mapToInt(dateAndFee -> dateAndFee.fee)
-                .sum());
+        var feesByDate = getDateAndFees(dateAndFees, bucketDuration)
+                .stream()
+                .collect(Collectors.groupingBy(dateAndFee -> dateAndFee.date.toLocalDate()));
+
+        return feesByDate.values().stream()
+                .mapToInt(fees -> Math.min(fees.stream().mapToInt(dateAndFee -> dateAndFee.fee).sum(), maxFee))
+                .sum();
     }
 
     /**
@@ -55,8 +60,8 @@ public class CongestionTaxCalculator {
                 // Compare with last value in list
                 var lastDateAndFee = filteredDateAndFees.peekLast();
                 var diffInMinutes = Duration.between(lastDateAndFee.date, dateAndFee.date).getSeconds() / 60;
-                // Check if we are in same bucket
-                if (diffInMinutes <= bucketDuration) {
+                // Check if we are in same bucket and the same day
+                if (diffInMinutes <= bucketDuration && lastDateAndFee.date.toLocalDate().equals(dateAndFee.date.toLocalDate())) {
                     if (dateAndFee.fee > lastDateAndFee.fee) {
                         // Replace last value with new value keeping the old date to keep track of the start of this bucket
                         filteredDateAndFees.removeLast();

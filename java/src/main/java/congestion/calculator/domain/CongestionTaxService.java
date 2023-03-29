@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -21,12 +22,20 @@ public class CongestionTaxService {
         this.congestionTaxRepository = congestionTaxRepository;
     }
 
-    public int calculateTax(@Nonnull Vehicle vehicle, @Nonnull List<LocalDateTime> localDateTimes) {
+    public int calculateTax(@Nonnull Vehicle vehicle, @Nonnull List<LocalDateTime> dates) {
         Objects.requireNonNull(vehicle, "Vehicle cannot be null");
-        Objects.requireNonNull(localDateTimes, "dates cannot be null");
-        if (congestionTaxRepository.isFreeVehicle(vehicle.getVehicleType()) || congestionTaxRepository.isFreeDate(localDateTimes.stream().findFirst().orElseThrow().toLocalDate())) {
+        Objects.requireNonNull(dates, "dates cannot be null");
+        if (congestionTaxRepository.isFreeVehicle(vehicle.getVehicleType())) {
             return 0;
         }
-        return congestionTaxCalculator.getTax(localDateTimes, congestionTaxRepository.getMaxFee(), congestionTaxRepository.bucketDuration(), congestionTaxRepository.getTaxPeriods());
+        var filteredDates = dates.stream()
+                .filter(localDateTime -> !isFreeDate(localDateTime.toLocalDate()))
+                .toList();
+
+        return congestionTaxCalculator.getTax(filteredDates, congestionTaxRepository.getMaxFee(), congestionTaxRepository.bucketDuration(), congestionTaxRepository.getTaxPeriods());
+    }
+
+    private boolean isFreeDate(LocalDate date) {
+        return congestionTaxRepository.isFreeDate(date);
     }
 }
