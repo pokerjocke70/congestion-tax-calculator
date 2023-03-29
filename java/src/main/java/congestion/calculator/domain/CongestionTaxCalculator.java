@@ -51,7 +51,7 @@ public class CongestionTaxCalculator {
      * Return a list of {@link DateAndFee} where the fee is the highest fee for each bucket duration
      */
     private static List<DateAndFee> getDateAndFees(List<DateAndFee> dateAndFees, int bucketDuration) {
-        LinkedList<DateAndFee> filteredDateAndFees = new LinkedList<>();
+        var filteredDateAndFees = new LinkedList<DateAndFee>();
         // Keep track of which bucket a date belongs to. The bucket starts with the first item. The first item not in the bucketDuration from the first one belongs to the next billable bucket.
         for (var dateAndFee : dateAndFees) {
             if (filteredDateAndFees.isEmpty()) {

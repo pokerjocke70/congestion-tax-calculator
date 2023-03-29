@@ -15,14 +15,14 @@ import java.util.List;
 @Profile("!jdbc")
 public class InMemoryCongestionTaxRepository implements CongestionTaxRepository {
 
-    static final List<String> tollFreeVehicles = List.of(
+    static final List<String> TOLL_FREE_VEHICLES = List.of(
             "Motorcycle",
             "Tractor",
             "Emergency",
             "Diplomat",
             "Foreign",
             "Military");
-    private final List<String> freeDates = List.of(
+    static final List<String> FREE_DATES = List.of(
             "2013-01-01",
             "2013-03-28",
             "2013-03-29",
@@ -74,7 +74,7 @@ public class InMemoryCongestionTaxRepository implements CongestionTaxRepository 
 
     @Override
     public boolean isFreeVehicle(String vehicleType) {
-        return tollFreeVehicles.contains(vehicleType);
+        return TOLL_FREE_VEHICLES.contains(vehicleType);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class InMemoryCongestionTaxRepository implements CongestionTaxRepository 
             return true;
         }
 
-        return freeDates.contains(date.toString());
+        return FREE_DATES.contains(date.toString());
     }
 
     @Override
